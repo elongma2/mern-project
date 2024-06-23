@@ -9,6 +9,9 @@ const app=express();
 
 app.use(express.json())
 
+
+
+
 mongoose.connect(process.env.MONGO).then(()=>{
     console.log("connected to DB")
 }).catch(err=>{

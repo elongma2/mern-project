@@ -18,7 +18,6 @@ mongoose.connect(process.env.MONGO).then(()=>{
 app.listen(3000,()=>{
     console.log("server is running on port 3000");
 });
-
 app.use('/api/user',userRouter);//using middleware
 app.use('/api/auth',authRouter);
 app.use((err,req,res,next)=>{

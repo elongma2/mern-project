@@ -2,19 +2,21 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { useDispatch,useSelector } from 'react-redux';
+import { signinStart,signinSuccess,signinFailure } from '../redux/user/userSlice';
 
 export default function Signin() {
   const [formdata,setFormdata]=useState({});
-  const [error,setError]=useState(null);
-  const [isloading,setIsloading]=useState(false);
+  const {loading,error}=useSelector((state)=>state.user);
   const navigate=useNavigate();
+  const dispatch=useDispatch();
   const handleChange=(e)=>{
       setFormdata({...formdata,
         [e.target.id]:e.target.value});
   };
   //links to backend 
   const handleSubmit=async (e)=>{
-    setIsloading(true);
+    dispatch(signinStart());
     e.preventDefault();
     try {
       const res=await fetch('/api/auth/signin',{
@@ -26,19 +28,17 @@ export default function Signin() {
       })
       const data=await res.json();
       console.log(data)
+
       if(data.success===false){
-        setIsloading(false);
-        setError(data.message);
+        dispatch(signinFailure(data.message));
         return;
       }
       
-      setIsloading(false);
-      setError(null);
+      dispatch(signinSuccess(data));
       navigate('/')
 
     } catch (error) {
-      setIsloading(false);
-      setError(error.message);
+      dispatch(signinFailure(error.message));
     }
   }
   
@@ -48,7 +48,7 @@ export default function Signin() {
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input className='border p-3 rounded-lg' type='email' placeholder='email' id='email'onChange={handleChange}/>
         <input className='border p-3 rounded-lg' type='password' placeholder='password' id='password'onChange={handleChange}/>
-        <button disabled={isloading} className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-95 disabled:opacity-80'>{isloading?'loading...':'Sign Up'}</button>
+        <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-95 disabled:opacity-80'>{loading?'loading...':'Sign Up'}</button>
       </form>
       <div className='flex justify-between mt-5'>
         <p>Do not have an account?</p>

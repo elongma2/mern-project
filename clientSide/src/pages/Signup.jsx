@@ -13,45 +13,34 @@ export default function Signup() {
         [e.target.id]:e.target.value});
   };
   //links to backend 
-  // Function to handle form submission
-const handleSubmit = async (e) => {
-  // Set loading state to true to indicate submission in progress
-  setIsloading(true);
-  e.preventDefault(); // Prevent the default form submission behavior
-  
-  try {
-      // Send a POST request to the backend endpoint for user signup
-      const res = await fetch('/api/auth/signup', {
-          method: 'POST', // Specify the request method as POST
-          headers: {
-              'Content-Type': 'application/json' // Set the request content type to JSON
-          },
-          body: JSON.stringify(formdata) // Convert form data to JSON string
-      });
-
-      // Parse the JSON response from the backend
-      const data = await res.json();
-
-      // Check if the backend response indicates a failure
-      if (data.success === false) {
-          setIsloading(false); // Stop the loading state
-          setError(data.message); // Set the error state with the message from the backend,.message and .sucess is from backend file index.js
-          return; // Exit the function early since the request failed
+  const handleSubmit=async (e)=>{
+    setIsloading(true);
+    e.preventDefault();
+    try {
+      const res=await fetch('/api/auth/signup',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify(formdata)
+      })
+      const data=await res.json();
+      console.log(data)
+      if(data.success===false){
+        setIsloading(false);
+        setError(data.message);
+        return;
       }
-
-      // If the signup is successful, stop the loading state and clear any error messages
+      
       setIsloading(false);
       setError(null);
-      // Navigate to the sign-in page after successful signup
-      navigate('/sign-in');
-  } catch (error) {
-      // Handle any unexpected errors (e.g., network issues, unexpected backend errors)
-      setIsloading(false); // Stop the loading state
-      setError(error.message); // Set the error state with the error message
-      console.error('Unexpected error:', error); // Log the unexpected error for debugging
-  }
-};
+      navigate('/sign-in')
 
+    } catch (error) {
+      setIsloading(false);
+      setError(error.message);
+    }
+  }
   
   return (
     <div className='p-3 max-w-lg mx-auto'>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import OAuth from '../components/OAuth';
 export default function Signup() {
   // State variables to manage form data, errors, and loading state
   const [formdata, setFormdata] = useState({});
@@ -74,6 +74,7 @@ export default function Signup() {
         <button disabled={isloading} className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-95 disabled:opacity-80'>
           {isloading ? 'loading...' : 'Sign Up'}
         </button>
+        <OAuth/>
       </form>
       
       {/* Link to sign-in page */}

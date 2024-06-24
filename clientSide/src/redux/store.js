@@ -32,3 +32,4 @@ export const store = configureStore({
 // Create a persistor which is responsible for persisting and rehydrating the store
 export const persistor = persistStore(store);
 
+//install redux persist in the client side

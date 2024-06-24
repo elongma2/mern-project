@@ -6,6 +6,7 @@ import Signup from './pages/Signup'
 import About from './pages/About'
 import Profile from './pages/Profile'
 import Header from './components/Header'
+import PrivateRoute from './components/privateRoute'
 
 export default function App() {
   return (<BrowserRouter>
@@ -15,7 +16,20 @@ export default function App() {
       <Route path='/sign-in' element={<Signin />}/>
       <Route path='/sign-up' element={<Signup />}/>
       <Route path='/about' element={<About />}/>
-      <Route path='/profile' element={<Profile />}/>
+      {/* 
+        Nested Routing Setup:
+        - The parent Route element={<PrivateRoute/>} indicates that any child routes, such as /profile,
+          should be handled by PrivateRoute, which likely includes authentication or private route logic.
+      */}
+      <Route element={<PrivateRoute/>}>
+        {/* 
+          Child Route path='/profile' element={<Profile />}: 
+          - When navigating to /profile, it's rendered within the context of PrivateRoute.
+          - This setup ensures that accessing /profile triggers PrivateRoute to manage the route,
+            typically involving authentication checks or other private route handling mechanisms.
+        */}
+  <       Route path='/profile' element={<Profile />} />
+      </Route>
     </Routes>
 
     </BrowserRouter>

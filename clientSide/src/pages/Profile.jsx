@@ -3,22 +3,25 @@ import { useSelector } from 'react-redux'
 import { useRef } from 'react'
 import {getDownloadURL, getStorage,ref, uploadBytesResumable} from 'firebase/storage'
 import { app } from '../firebase'
+import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice.js'
+import { useDispatch } from 'react-redux'
 //just follow the steps/instructions from this code
 export default function Profile() {
   const fileref = useRef(null); // useRef to store a reference to file input element
-  const { currentUser } = useSelector((state) => state.user); // Redux: get current user from state
+  const { currentUser,loading,error } = useSelector((state) => state.user); // Redux: get current user from state
   const [file, setFile] = useState(undefined); // State to hold selected file
   const [filePerc, setFilePerc] = useState(0); // State to track file upload progress percentage
   const [fileUploadError, setFileUploadError] = useState(false); // State to handle file upload errors
   const [formData, setFormData] = useState({}); // State to hold form data including uploaded file URL
-
-  useEffect(() => {
+  const [updateSuccess,setUpdateSucess]=useState(false);
+  const dispatch = useDispatch();
+ /*  useEffect(() => {
     // Retrieve avatar URL from local storage on component mount
     const savedAvatar = localStorage.getItem('avatar');
     if (savedAvatar) {
       setFormData({ avatar: savedAvatar });
     }
-  }, []);
+  }, []); */
 
   useEffect(() => {
     if (file) {
@@ -31,7 +34,7 @@ export default function Profile() {
     const filename = new Date().getTime() + file.name; // Generate a unique filename
     const storageRef = ref(storage, 'images/' + filename); // Create a reference to storage location
     const uploadTask = uploadBytesResumable(storageRef, file); // Upload the file
-
+    
     // Track upload progress
     uploadTask.on(
       'state_changed',
@@ -46,7 +49,7 @@ export default function Profile() {
         // Upload complete, get the download URL
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setFormData({ ...formData, avatar: downloadURL }); // Update form data with uploaded file URL
-          localStorage.setItem('avatar', downloadURL);
+          /* localStorage.setItem('avatar', downloadURL); */
         });
       }
     );
@@ -62,13 +65,43 @@ export default function Profile() {
 // - After the upload completes, `snapshot` can also provide access to the reference (`ref`)
 //   of the uploaded file, which is used to retrieve the download URL (`getDownloadURL`).
 
+  const handlechange = (e) => {
+    e.preventDefault();
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method:'POST',  // PATCH request is used to update a resource
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const data=await res.json();
+      console.log(data);
+      if(data.success===false){
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setUpdateSucess(true);
+      
+    } catch (error) { 
+      dispatch(updateUserFailure(error.message));
+    }
+  }
+
   return (
     <div className='p-3 max-w-lg mx-auto' >
       <h1 className='text-3xl font-semibold my-7 text-center'>Profile</h1>
-      <form className='flex flex-col gap-4 '>
+      <form onSubmit={handleSubmit} className='flex flex-col gap-4 '>
         <input onChange={(e)=>setFile(e.target.files[0])}/* use [0] to get the first file in case of multiple files */ type='file' ref={fileref} hidden accept='image/*'/>{/*file upload only accept image */}
         <img onClick={()=>fileref.current.click()} className='w-24 h-24 rounded-full object-cover cursor-pointer mt-2 self-center' 
-        src={formData? formData.avatar : currentUser.avatar} alt="profile"/>
+        src={formData?.avatar || currentUser.avatar} alt="profile"/>
 
         <p className='text-sm self-center'>
           {fileUploadError ? 
@@ -79,18 +112,20 @@ export default function Profile() {
         </p>
 
         <input type="text" className='border p-3 
-        rounded-lg' placeholder='username' id='username'/>
+        rounded-lg' placeholder='username' id='username' defaultValue={currentUser.username} onChange={handlechange}/>
         <input type="email" className='border p-3 
-        rounded-lg' placeholder='email' id='email'/> 
-        <input type="text" className='border p-3 
-        rounded-lg' placeholder='password' id='password'/>
-        <button className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 
-        disabled:opacity-80'>Update</button>
+        rounded-lg' placeholder='email' id='email' defaultValue={currentUser.email} onChange={handlechange}/> 
+        <input type="password" className='border p-3 
+        rounded-lg' placeholder='password' id='password' onChange={handlechange} />
+        <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 
+        disabled:opacity-80'>{loading ? "Loading..." : "Update"}</button>
       </form>
       <div className='flex justify-between mt-5'>
         <span className='text-red-700 cursor-pointer'>Delete Account</span>
         <span className='text-red-700 cursor-pointer'>Sign Out</span>
       </div>
+      <p className='text-red-700 mt-5'>{error? error :''}</p>
+      <p className='text-green-700 mt-5'>{updateSuccess? 'Updated Successfully' :''}</p>
     </div>
   )
 }

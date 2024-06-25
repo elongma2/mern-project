@@ -46,7 +46,7 @@ export const google = async (req, res, next) => {
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
             // Exclude password field from user document
-            const { password: pass, ...others } = user._doc;
+            const { password: pass, ...others } = user._doc;//._doc is this property from mongoose when data is taken
             // Set the access_token cookie and respond with user data (excluding password)
             res.cookie('access_token', token, { httpOnly: true }).status(200).json(others);
         } else {

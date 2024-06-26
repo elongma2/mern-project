@@ -36,5 +36,4 @@ app.use((err,req,res,next)=>{
         statuscode:statuscode,
         message
     });
-});
-
+})

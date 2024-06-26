@@ -7,6 +7,7 @@ import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/
 import { deleteUserFailure, deleteUserStart, deleteUserSuccess } from '../redux/user/userSlice.js'
 import { signOutUserFailure, signOutUserStart, signOutUserSuccess } from '../redux/user/userSlice.js'
 import { useDispatch } from 'react-redux'
+import {Link} from 'react-router-dom'
 //just follow the steps/instructions from this code
 export default function Profile() {
   const fileref = useRef(null); // useRef to store a reference to file input element
@@ -17,6 +18,7 @@ export default function Profile() {
   const [formData, setFormData] = useState({}); // State to hold form data including uploaded file URL
   const [updateSuccess,setUpdateSucess]=useState(false);
   const dispatch = useDispatch();
+  console.log(currentUser)
  /*  useEffect(() => {
     // Retrieve avatar URL from local storage on component mount
     const savedAvatar = localStorage.getItem('avatar');
@@ -152,7 +154,12 @@ export default function Profile() {
         rounded-lg' placeholder='password' id='password' onChange={handlechange} />
         <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 
         disabled:opacity-80'>{loading ? "Loading..." : "Update"}</button>
+        <Link className='bg-green-700 text-white p-3 rounded-lg
+        uppercase text-center hover:opacity-95' to={"/create-listing"}>
+            Create Listing
+        </Link>
       </form>
+      
       <div className='flex justify-between mt-5'>
         <span onClick={handleDelete} className='text-red-700 cursor-pointer'>Delete Account</span>
         <span onClick={handleSignOut} className='text-red-700 cursor-pointer'>Sign Out</span>

@@ -4,6 +4,8 @@ import dotenv from 'dotenv'
 import userRouter from './routes/userRoutes.js'
 import authRouter from './routes/authRoutes.js'
 import cookieParser from 'cookie-parser';
+import listingRouter from './routes/listingRoutes.js'
+
 dotenv.config();
 const app=express();
 
@@ -23,6 +25,8 @@ app.listen(3000,()=>{
 });
 app.use('/api/user',userRouter);//using middleware
 app.use('/api/auth',authRouter);
+app.use('/api/listing',listingRouter);
+
 app.use((err,req,res,next)=>{
     console.log(err)
     const statuscode=err.statuscode || 500

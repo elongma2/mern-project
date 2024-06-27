@@ -18,6 +18,8 @@ export default function Profile() {
   const [formData, setFormData] = useState({}); // State to hold form data including uploaded file URL
   const [updateSuccess,setUpdateSucess]=useState(false);
   const dispatch = useDispatch();
+  const [showlistingserror,setshowlistingserror]=useState(false);
+  const[userlistings,setuserlistings]=useState([]);
   console.log(currentUser)
  /*  useEffect(() => {
     // Retrieve avatar URL from local storage on component mount
@@ -129,6 +131,37 @@ export default function Profile() {
       dispatch(signOutUserFailure(error.message));
     }
   }
+  const handleshowlistings=async ()=>{
+    try {
+      setshowlistingserror(false);
+      const res=await fetch(`api/user/listings/${currentUser._id}`);
+      const data= await res.json();
+      if(data.success===false){
+        setshowlistingserror(true);
+        return;
+      }
+      setuserlistings(data)
+    } catch (error) {
+      setshowlistingserror(true);
+    }
+  }
+
+  const handleDeletelisting = async(id)=>{
+      try {
+        const res= await fetch(`api/listing/delete/${id}`,{
+          method:'DELETE',
+        });
+        const data=await res.json();
+        if(data.success===false){
+          console.log(data.message);
+          return;
+        }
+        setuserlistings(userlistings.filter((listing)=>listing._id!==id));
+
+      } catch (error) {
+        console.log(error.message);
+      }
+  }
 
   return (
     <div className='p-3 max-w-lg mx-auto' >
@@ -166,6 +199,27 @@ export default function Profile() {
       </div>
       <p className='text-red-700 mt-5'>{error? error :''}</p>
       <p className='text-green-700 mt-5'>{updateSuccess? 'Updated Successfully' :''}</p>
+      <button onClick={handleshowlistings} 
+      className='text-green-700 w-full'>Show Listings</button>
+      <p className='text-red-700 mt-5'>{showlistingserror? 'Error showing listings' :''}</p>
+      {userlistings && userlistings.length>0 && 
+      userlistings.map((listing)=>(
+        <div key={listing._id} className='border rounded-lg p-3 flex justify-between items-center gap-5'>
+            <Link to={`/listings/${listing._id}`}>
+                <img className='w-20 h-16 object-cover ' src={listing.imageUrls[0]}/>
+            </Link>
+
+            <Link className='text-slate-700 font-semibold  
+                hover:underline truncate' to={`/listings/${listing._id}`}>
+                <p>{listing.name}</p>
+            </Link>
+
+            <div className='flex flex-col items-center'>
+                <button onClick={()=>handleDeletelisting(listing._id)} className='text-red-700 uppercase'>Delete</button>
+                <button className='text-green-700 uppercase'>Edit</button>
+            </div>
+        </div>
+      ))}
     </div>
   )
 }

@@ -9,7 +9,7 @@ import Header from './components/Header'
 import PrivateRoute from './components/privateRoute'
 import CreateListing from './pages/CreateListing'
 import UpdateListing from './pages/UpdateListing'
-
+import Listed from './pages/Listed'
 export default function App() {
   return (<BrowserRouter>
     <Header/> {/* add things in all sections */}
@@ -18,6 +18,7 @@ export default function App() {
       <Route path='/sign-in' element={<Signin />}/>
       <Route path='/sign-up' element={<Signup />}/>
       <Route path='/about' element={<About />}/>
+      <Route path='/listing/:listingId' element={<Listed />}/>
       {/* 
         Nested Routing Setup:
         - The parent Route element={<PrivateRoute/>} indicates that any child routes, such as /profile,

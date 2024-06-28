@@ -27,3 +27,22 @@ export const deletelistening= async (req,res,next)=>{
         next(error)
     }
 }
+
+
+export const updateListing= async (req,res,next)=>{
+  const listing = await Listing.findById(req.params.id);
+  if(!listing){
+    return next(errorHandle(404,"listing not found"))
+}
+
+  if(req.user.id !== listing.userRef){
+    return next(errorHandle(403,"you can only update your own listings"))
+  }
+
+  try {
+    const updatedListing =await Listing.findByIdAndUpdate(req.params.id,{$set:req.body},{new:true});
+    res.status(200).json(updatedListing);
+  } catch (error) {
+    next(error);
+  }
+}

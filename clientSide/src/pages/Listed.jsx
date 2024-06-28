@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom'
 import {Swiper,SwiperSlide} from 'swiper/react'
 import { Navigation} from 'swiper/modules';
 import  SwiperCore  from 'swiper';
+import { useSelector } from 'react-redux';
+import Contact from '../components/Contact';
 import 'swiper/css/bundle'
 import {
   FaBath,
@@ -21,6 +23,7 @@ export default function Listed() {
   const[error,seterror]=useState(false);
   const [copied, setCopied] = useState(false);
   const [contact, setContact] = useState(false);
+  const {currentUser}=useSelector((state)=>state.user);
   const params=useParams();
     useEffect(() => {
         const fetchlisting =async()=>{
@@ -126,6 +129,11 @@ export default function Listed() {
               {listing.furnished? 'Furnished' : 'Not furnished'}
             </li>
           </ul>
+          {currentUser && listing.userRef !==currentUser._id && !contact &&(
+             <button onClick={()=>setContact(true)} className=' bg-green-900 w-[50%] text-white text-center p-3 rounded-md'>
+              Contact Landlord</button>
+          )}
+          {contact && <Contact listing={listing}/>}
         </div>
       </div>
       )}

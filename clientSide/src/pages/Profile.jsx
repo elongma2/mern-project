@@ -20,6 +20,7 @@ export default function Profile() {
   const dispatch = useDispatch();
   const [showlistingserror,setshowlistingserror]=useState(false);
   const[userlistings,setuserlistings]=useState([]);
+  const[contact,setcontact]=useState(false); // State to indicate if the contact button is clicked
   console.log(currentUser)
  /*  useEffect(() => {
     // Retrieve avatar URL from local storage on component mount
@@ -202,15 +203,16 @@ export default function Profile() {
       <button onClick={handleshowlistings} 
       className='text-green-700 w-full'>Show Listings</button>
       <p className='text-red-700 mt-5'>{showlistingserror? 'Error showing listings' :''}</p>
-      {userlistings && userlistings.length>0 && 
+      {userlistings && !contact && userlistings.length>0 && 
       userlistings.map((listing)=>(
+
         <div key={listing._id} className='border rounded-lg p-3 flex justify-between items-center gap-5'>
-            <Link to={`/listings/${listing._id}`}>
+            <Link to={`/listing/${listing._id}`}>
                 <img className='w-20 h-16 object-cover ' src={listing.imageUrls[0]}/>
             </Link>
 
             <Link className='text-slate-700 font-semibold  
-                hover:underline truncate' to={`/listings/${listing._id}`}>
+                hover:underline truncate' to={`/listing/${listing._id}`}>
                 <p>{listing.name}</p>
             </Link>
 

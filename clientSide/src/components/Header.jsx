@@ -6,19 +6,25 @@ import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 export default function Header() {
     const {currentUser}=useSelector((state)=>state.user)//using the current user from slice redux
-    const[searchTerm,setsearchTerm]=useState('');
-    const navigate=useNavigate();
+    const[searchTerm,setsearchTerm]=useState(''); // State to store search term
+    const navigate=useNavigate(); // Hook for navigation
     const handleSubmit=(e)=>{
         e.preventDefault();
+        // Constructing search query parameters using URLSearchParams
         const urlParams=new URLSearchParams(window.location.search);
+        //seting the search term as searchTerm
         urlParams.set('searchTerm',searchTerm);
+        //converting to string
         const searchQuery=urlParams.toString();
+        //navigate after user got it
         navigate(`/search?${searchQuery}`);
     }
-
+    // Effect hook to update searchTerm state based on URL search parameters
     useEffect(() => {
-        const urlParams=new URLSearchParams(location.search);
-        const searchTermFromUrl=urlParams.get('searchTerm');
+        const urlParams=new URLSearchParams(location.search);// Accessing URL search parameters from current location
+        const searchTermFromUrl=urlParams.get('searchTerm');// Get searchTerm from URL query parameters
+
+        // Update searchTerm state if searchTermFromUrl exists
         if(searchTermFromUrl) {
             setsearchTerm(searchTermFromUrl);
         }

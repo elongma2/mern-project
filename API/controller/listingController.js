@@ -105,7 +105,7 @@ export const getListings = async (req, res, next) => {
             parking,
             type,
         })
-        .sort({ [sort]: order }) // Sort by specified field and order [sort] allow it to be dynamic
+        .sort({ [sort]: order }) // Sort by specified field and order [sort] allow it to be dynamic order can be passed as asc or desc from mongoose
         .limit(limit) // Limit the number of results
         .skip(startIndex); // Skip to start index for pagination
 

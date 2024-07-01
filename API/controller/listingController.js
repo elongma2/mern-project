@@ -63,7 +63,7 @@ export const getListing= async (req,res,next)=>{
 export const getListings = async (req, res, next) => {
     try {
         // Parse and set default values for pagination and limits
-        const limit = parseInt(req.query.limit) || 9; // Number of listings per page, default 9
+        const limit = parseInt(req.query.limit) || 3; // Number of listings per page, default 9
         const startIndex = parseInt(req.query.startIndex) || 0; // Starting index for pagination, default 0
 
         // Handle offer filter

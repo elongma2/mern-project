@@ -14,6 +14,7 @@ export default function Search() {
     })
     const[loading,setloading]=useState(false);
     const[listings,setlistings]=useState([]);
+    const[showmore,setshowmore]=useState(false);
     
 
     useEffect(()=>{
@@ -40,9 +41,16 @@ export default function Search() {
         }
         const fetchlistings=async()=>{
             setloading(true);
+            setshowmore(false);
             const searchquery=urlParams.toString();
             const res= await fetch(`/api/listing/get/?${searchquery}`);
             const data= await res.json();
+            if(data.length>2){
+                setshowmore(true);
+            }
+            else{
+                setshowmore(false);
+            }
             console.log(data)
             setlistings(data);
             setloading(false);
@@ -87,6 +95,20 @@ export default function Search() {
         urlParams.set('order',sidebar.order);
         const searchQuery=urlParams.toString();
         navigate(`/search?${searchQuery}`);
+    }
+    const handleShowMore=async ()=>{
+        //console.log(listings.length);
+        const numberoflistings=listings.length;
+        const startingindex=numberoflistings;
+        const urlParams=new URLSearchParams(location.search);
+        urlParams.set('startIndex',startingindex);
+        const searchQuery=urlParams.toString();
+        const res= await fetch(`/api/listing/get/?${searchQuery}`);
+        const data= await res.json();
+        if(data.length<2){
+            setshowmore(false);
+        }
+        setlistings([...listings,...data]);
     }
 
 
@@ -170,6 +192,10 @@ export default function Search() {
                         return <Listingitem key={listing._id} listing={listing}/>
                     })
                 }
+                {showmore && (
+                    <button className='text-green-700 p-7 text-center w-full
+                    hover:underline' onClick={()=>handleShowMore()}>show more...</button>
+                )}
             </div>
         </div>
     </div>

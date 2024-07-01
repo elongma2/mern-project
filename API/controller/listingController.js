@@ -108,7 +108,8 @@ export const getListings = async (req, res, next) => {
         .sort({ [sort]: order }) // Sort by specified field and order [sort] allow it to be dynamic order can be passed as asc or desc from mongoose
         .limit(limit) // Limit the number of results
         .skip(startIndex); // Skip to start index for pagination
-
+        
+         console.log(listings)
         // Respond with listings as JSON
         return res.status(200).json(listings);
     } catch (error) {

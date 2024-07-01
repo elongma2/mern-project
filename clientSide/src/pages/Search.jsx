@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {useNavigate} from 'react-router-dom'
+import Listingitem from '../components/Listingitem';
 export default function Search() {
     const navigate=useNavigate();
     const [sidebar,setsidebar]=useState({
@@ -13,7 +14,7 @@ export default function Search() {
     })
     const[loading,setloading]=useState(false);
     const[listings,setlistings]=useState([]);
-    console.log(listings)
+    
 
     useEffect(()=>{
         const urlParams=new URLSearchParams(location.search);
@@ -42,6 +43,7 @@ export default function Search() {
             const searchquery=urlParams.toString();
             const res= await fetch(`/api/listing/get/?${searchquery}`);
             const data= await res.json();
+            console.log(data)
             setlistings(data);
             setloading(false);
         }
@@ -152,8 +154,23 @@ export default function Search() {
             </form>
         </div>
 
-        <div className=''>
+        <div className='flex-1'>
             <h1 className='text-3xl font-semibold border-b p-3 text-slate-700 mt-5'>Listing Results:</h1>
+            <div className='flex flex-wrap gap-4'>
+                {!loading &&listings.length===0 && (
+                    <p className='text-xl text-slate-700 '>No listings found!</p>
+                )}
+                {
+                    loading && (
+                        <p className='text-xl text-slate-700 text-center w-full'>Loading...</p>
+                    )
+                }
+                {
+                    !loading && listings && listings.map((listing)=>{
+                        return <Listingitem key={listing._id} listing={listing}/>
+                    })
+                }
+            </div>
         </div>
     </div>
   )

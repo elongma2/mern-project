@@ -108,10 +108,7 @@ export default function Listed() {
             {listing.description}
           </p>
           <ul className='text-green-900 font-semibold text-sm flex items-center gap-4 sm:gap-6 flex-wrap'>
-            <li className='flex items-center gap-1 whitespace-nowrap'>
-              <FaBed className='text-lg'/>
-              {listing.bedrooms > 1 ? `${listing.bedrooms} Beds` : '1 Bed'}
-            </li>
+           
             <li className='flex items-center gap-1 whitespace-nowrap'>
               <FaBath className='text-lg'/>
               {listing.bathrooms > 1 ? `${listing.bathrooms} Baths` : '1 Bath'}

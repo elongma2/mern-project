@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 
 const listingSchema=new mongoose.Schema({
@@ -25,6 +26,10 @@ const listingSchema=new mongoose.Schema({
         required:true,
     },
     bathrooms:{
+        type:Number,
+        required:true
+    },
+    bedrooms:{
         type:Number,
         required:true
     },
